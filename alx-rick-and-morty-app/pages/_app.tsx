@@ -4,13 +4,14 @@ import { ApolloProvider } from '@apollo/client/react';
 import client from "@/graphql/apolloClient";
 import ErrorBoundary from '@/components/ErrorBoundary';
 
+
 function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <ApolloProvider client={client}>
-      <ErrorBoundary>
+  return ( 
+    <ErrorBoundary>
+      <ApolloProvider client={client}>
         <Component {...pageProps} />
-      </ErrorBoundary>
-    </ApolloProvider>
+      </ApolloProvider>
+    </ErrorBoundary>
   )
 }
 

@@ -1,13 +1,15 @@
-import React, { ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
+import * as Sentry from '@sentry/react';
+
 
 interface State {
   hasError: boolean;
+  errorMessage?: string;
 }
 
 interface ErrorBoundaryProps {
   children: ReactNode;
 }
-
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps , State> {
   constructor(props: ErrorBoundaryProps) {
@@ -19,8 +21,13 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps , State> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.log({ error, errorInfo });
+     Sentry.captureException(error, {
+      extra: {
+        componentStack: errorInfo.componentStack,
+      },
+    });
   }
 
   render() {
@@ -28,6 +35,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps , State> {
       return (
         <div>
           <h2>Oops, there is an error!</h2>
+          <p>{this.state.errorMessage}</p>
           <button onClick={() => this.setState({ hasError: false })}>
             Try again?
           </button>
